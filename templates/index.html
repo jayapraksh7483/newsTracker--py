@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <h1 class="logo">News Tracker</h1>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('my_posts') }}">My Posts</a>
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('admin') }}">Admin</a>
+                {% endif %}
+                <a href="{{ url_for('add_post') }}">Add News</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+    
+    <div class="headlines">
+        <div class="marquee">
+            <span class="marquee-content">
+                Latest News: {% for post in latest_posts %}{{ post.title }}{% if not loop.last %} • {% endif %}{% endfor %}
+            </span>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="category-links">
+            <h3>Browse by Category:</h3>
+            <div class="category-buttons">
+                <a href="{{ url_for('category_news', category_name='Politics') }}" class="category-btn politics">Politics</a>
+                <a href="{{ url_for('category_news', category_name='Sports') }}" class="category-btn sports">Sports</a>
+                <a href="{{ url_for('category_news', category_name='Technology') }}" class="category-btn technology">Technology</a>
+                <a href="{{ url_for('category_news', category_name='Entertainment') }}" class="category-btn entertainment">Entertainment</a>
+            </div>
+        </div>
+        
+        <form method="GET" class="filter-form">
+            <select name="category" class="filter-select">
+                <option value="">All Categories</option>
+                <option value="Politics" {% if category == 'Politics' %}selected{% endif %}>Politics</option>
+                <option value="Sports" {% if category == 'Sports' %}selected{% endif %}>Sports</option>
+                <option value="Technology" {% if category == 'Technology' %}selected{% endif %}>Technology</option>
+                <option value="Entertainment" {% if category == 'Entertainment' %}selected{% endif %}>Entertainment</option>
+            </select>
+            <select name="city" class="filter-select">
+                <option value="">All Cities</option>
+                <option value="Hyderbad" {% if city == 'Hyderbad' %}selected{% endif %}>Hyderbad</option>
+                <option value="Vizag" {% if city == 'Vizag' %}selected{% endif %}>Vizag</option>
+                <option value="Mumbai" {% if city == 'Mumbai' %}selected{% endif %}>Mumbai</option>
+                <option value="Chennai" {% if city == 'Chennai' %}selected{% endif %}>Chennai</option>
+            </select>
+            <button type="submit" class="filter-btn">Apply Filters</button>
+        </form>
+        
+        <div class="news-feed">
+            {% for post in posts %}
+                <div class="post">
+                    {% if post.media_url and post.media_type %}
+                        {% if post.media_type == 'image' %}
+                            <img src="{{ url_for('static', filename=post.media_url) }}" alt="Post Image" class="post-image">
+                        {% elif post.media_type == 'video' %}
+                            <video controls class="post-video">
+                                <source src="{{ url_for('static', filename=post.media_url) }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        {% endif %}
+                    {% endif %}
+                    <h3 class="post-title">
+                        <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
+                    </h3>
+                    <p class="post-meta">Posted by {{ post.user.username }} on {{ post.date_posted.strftime('%Y-%m-%d %H:%M') }} | {{ post.city }}</p>
+                    <p class="post-description">{{ post.description | truncate(100) }}</p>
+                    <a href="{{ url_for('view_post', post_id=post.id) }}" class="read-more">Read More</a>
+                    {% if current_user.is_authenticated %}
+                        <div class="post-actions">
+                            <button type="button" class="action-btn like-btn" onclick="likePost({{ post.id }})" data-post-id="{{ post.id }}">
+                                <span class="like-icon">{% if post.user_liked %}❤️{% else %}🤍{% endif %}</span>
+                                <span class="like-count">{{ post.likes }}</span>
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p>No posts found.</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

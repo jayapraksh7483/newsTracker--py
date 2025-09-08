@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password - News Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <h1 class="logo">News Tracker</h1>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+            <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+            <a href="{{ url_for('register') }}" class="nav-link">Register</a>
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <h2 class="auth-title">Forgot Password</h2>
+        <p class="helper-text">Enter your email or phone number to receive a password reset OTP.</p>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-message">{{ messages[0] }}</div>
+            {% endif %}
+        {% endwith %}
+        <form method="POST" action="{{ url_for('forgot') }}" class="auth-form">
+            <div class="form-group">
+                <label for="email">Email or Phone</label>
+                <input type="text" id="email" name="email" required placeholder="Enter your email or phone">
+            </div>
+            <button type="submit" class="auth-btn">Send OTP</button>
+            <p class="helper-text small">We'll send you a one-time password to reset your password.</p>
+            <div class="auth-links">
+                <a href="{{ url_for('login') }}" class="auth-link">Back to Login</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

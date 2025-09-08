@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if post %}Update Post{% else %}Add News{% endif %} - News Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <h2 class="auth-title">{% if post %}Update Post{% else %}Add News{% endif %}</h2>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-message">{{ messages[0] }}</div>
+            {% endif %}
+        {% endwith %}
+        <form method="POST" action="{% if post %}{{ url_for('edit_post', post_id=post.id) }}{% else %}{{ url_for('add_post') }}{% endif %}" enctype="multipart/form-data" class="auth-form">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" value="{% if post %}{{ post.title }}{% endif %}" required placeholder="Enter the news title">
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" required placeholder="Enter the news description" rows="4">{% if post %}{{ post.description }}{% endif %}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" name="category" required>
+                    <option value="" disabled selected>Select a category</option>
+                    <option value="Politics" {% if post and post.category == 'Politics' %}selected{% endif %}>Politics</option>
+                    <option value="Sports" {% if post and post.category == 'Sports' %}selected{% endif %}>Sports</option>
+                    <option value="Technology" {% if post and post.category == 'Technology' %}selected{% endif %}>Technology</option>
+                    <option value="Entertainment" {% if post and post.category == 'Entertainment' %}selected{% endif %}>Entertainment</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="city">City</label>
+                <select id="city" name="city" required>
+                    <option value="">All Cities</option>
+                <option value="Hyderbad" {% if city == 'Hyderbad' %}selected{% endif %}>Hyderbad</option>
+                <option value="Vizag" {% if city == 'Vizag' %}selected{% endif %}>Vizag</option>
+                <option value="Mumbai" {% if city == 'Mumbai' %}selected{% endif %}>Mumbai</option>
+                <option value="Chennai" {% if city == 'Chennai' %}selected{% endif %}>Chennai</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="url">URL (Optional)</label>
+                <input type="url" id="url" name="url" value="{% if post %}{{ post.url }}{% endif %}" placeholder="Enter the source URL (optional)">
+            </div>
+            <div class="form-group">
+                <label for="media_file">Upload Image/Video</label>
+                <input type="file" id="media_file" name="media_file" accept="image/*,video/*">
+            </div>
+            <div class="form-group">
+                <label for="media_url">Enter Media URL</label>
+                <input type="url" id="media_url" name="media_url" value="{% if post %}{{ post.media_url }}{% endif %}" placeholder="Enter media URL (optional)">
+            </div>
+            <div class="form-group">
+                <label for="media_type">Media Type</label>
+                <select id="media_type" name="media_type">
+                    <option value="" {% if not post or not post.media_type %}selected{% endif %}>None</option>
+                    <option value="image" {% if post and post.media_type == 'image' %}selected{% endif %}>Image</option>
+                    <option value="video" {% if post and post.media_type == 'video' %}selected{% endif %}>Video</option>
+                </select>
+            </div>
+            <button type="submit" class="auth-btn">{% if post %}Update Post{% else %}Add Post{% endif %}</button>
+            <div class="auth-links">
+                <a href="{{ url_for('index') }}" class="auth-link">Home</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

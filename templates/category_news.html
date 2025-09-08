@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ category }} News - News Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <h1 class="logo">News Tracker</h1>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Home</a>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('my_posts') }}">My Posts</a>
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('admin') }}">Admin</a>
+                {% endif %}
+                <a href="{{ url_for('add_post') }}">Add News</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="category-header">
+            <h1 class="category-title">{{ category }} News</h1>
+            <a href="{{ url_for('index') }}" class="back-btn">← Back to All News</a>
+        </div>
+
+        {% if posts %}
+        <div class="category-posts-container">
+            <div class="category-posts-scroll">
+                {% for post in posts %}
+                <div class="category-post-card">
+                    {% if post.media_url and post.media_type %}
+                    <div class="post-media">
+                        {% if post.media_type == 'image' %}
+                            <img src="{{ url_for('static', filename=post.media_url) }}" alt="{{ post.title }}" class="post-image">
+                        {% elif post.media_type == 'video' %}
+                            <video controls class="post-video">
+                                <source src="{{ url_for('static', filename=post.media_url) }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="post-content">
+                        <h3 class="post-title">
+                            <a href="{{ url_for('view_post', post_id=post.id) }}">{{ post.title }}</a>
+                        </h3>
+                        
+                        <div class="post-meta">
+                            <span class="post-author">By: {{ post.user.username }}</span>
+                            <span class="post-date">{{ post.date_posted.strftime('%Y-%m-%d %H:%M') }}</span>
+                            <span class="post-city">{{ post.city }}</span>
+                        </div>
+
+                        <p class="post-description">{{ post.description | truncate(120) }}</p>
+                        
+                        <div class="post-stats">
+                            <span class="stat">❤️ {{ post.likes }} likes</span>
+                            <span class="stat">💬 {{ post.comments|length }} comments</span>
+                        </div>
+
+                        <div class="post-actions">
+                            <a href="{{ url_for('view_post', post_id=post.id) }}" class="action-btn">Read Full</a>
+                            {% if current_user.is_authenticated %}
+                            <button type="button" class="like-btn {% if post.user_liked %}liked{% endif %}" 
+                                    onclick="likePost({{ post.id }})" data-post-id="{{ post.id }}">
+                                <span class="like-icon">{% if post.user_liked %}❤️{% else %}🤍{% endif %}</span>
+                                <span class="like-count">{{ post.likes }}</span>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="no-posts">
+            <p>No posts found in {{ category }} category.</p>
+            <a href="{{ url_for('add_post') }}" class="action-btn">Add First Post</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

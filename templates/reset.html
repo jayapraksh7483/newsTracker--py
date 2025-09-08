@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password - News Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <h1 class="logo">News Tracker</h1>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+            <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+            <a href="{{ url_for('register') }}" class="nav-link">Register</a>
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <h2 class="auth-title">Reset Password</h2>
+        <p class="helper-text">Enter the OTP sent to your email/phone and create a new password.</p>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-message">{{ messages[0] }}</div>
+            {% endif %}
+        {% endwith %}
+        <form method="POST" action="{{ url_for('reset', token=token) }}" class="auth-form">
+            <div class="form-group">
+                <label for="otp">OTP</label>
+                <input type="text" id="otp" name="otp" required placeholder="Enter the OTP sent to your email/phone">
+            </div>
+            <div class="form-group">
+                <label for="password">New Password</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your new password">
+            </div>
+            <button type="submit" class="auth-btn">Reset Password</button>
+            <p class="helper-text small">The OTP is valid for 10 minutes.</p>
+            <div class="auth-links">
+                <a href="{{ url_for('forgot') }}" class="auth-link">Resend OTP</a>
+                <a href="{{ url_for('login') }}" class="auth-link">Back to Login</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
