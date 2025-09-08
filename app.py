@@ -19,11 +19,12 @@ load_dotenv()
 app = Flask(__name__)
 
 # ------------ CONFIG ------------
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', secrets.token_hex(32))
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY','a3393c9763eed0e7dfd5ea1fbae3a8a1c0ed765ac3c6e972ec1f9f4c6a55112d')
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-    "DATABASE_URL",  # For production (e.g., Render PostgreSQL)
-    f"mysql+pymysql://root:{os.environ.get('DB_PASSWORD', 'NewPassword123')}@localhost/news_db"  # Local MySQL
+    "DATABASE_URL",
+    f"mysql://root:{os.environ.get('DB_PASSWORD', 'NewPassword123')}@localhost/news_db"
 )
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'webm'}
