@@ -19,22 +19,17 @@ load_dotenv()
 app = Flask(__name__)
 
 # ------------ CONFIG ------------
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY','a3393c9763eed0e7dfd5ea1fbae3a8a1c0ed765ac3c6e972ec1f9f4c6a55112d')
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
-    "DATABASE_URL",
-    f"mysql://root:{os.environ.get('DB_PASSWORD', 'NewPassword123')}@localhost/news_db"
-)
-
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'webm'}
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 # Email configuration
-app.config['SMTP_SERVER'] = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
+app.config['SMTP_SERVER'] = os.environ.get('SMTP_SERVER')
 app.config['SMTP_PORT'] = int(os.environ.get('SMTP_PORT', 587))
-app.config['SMTP_EMAIL'] = os.environ.get('SMTP_EMAIL', 'via18352@gmail.com')
-app.config['SMTP_PASSWORD'] = os.environ.get('SMTP_PASSWORD', 'mwbb migc kbij qscg')
+app.config['SMTP_EMAIL'] = os.environ.get('SMTP_EMAIL')
+app.config['SMTP_PASSWORD'] = os.environ.get('SMTP_PASSWORD')
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
